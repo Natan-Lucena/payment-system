@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.Zer0Rx.paymentsystem.dtos.UserResponse;
 import com.Zer0Rx.paymentsystem.entities.User;
 import com.Zer0Rx.paymentsystem.repositories.UserRepository;
 import com.Zer0Rx.paymentsystem.utils.RandomString;
@@ -15,7 +16,7 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    public User registerUser(User user){
+    public UserResponse registerUser(User user){
         if(userRepository.findByEmail(user.getEmail()) != null){
             throw new RuntimeException("This email is already in use");
         }
@@ -26,6 +27,8 @@ public class UserService {
         user.setEnable(false);
 
         User savedUser = userRepository.save(user);
-        return savedUser;
+
+        UserResponse userResponse = new UserResponse(savedUser.getId() ,savedUser.getName(), savedUser.getEmail(), savedUser.getPassword());
+        return userResponse;
     } 
 }

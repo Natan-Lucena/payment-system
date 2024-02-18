@@ -3,8 +3,11 @@ package com.Zer0Rx.paymentsystem.controllers;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Zer0Rx.paymentsystem.dtos.UserRequest;
+import com.Zer0Rx.paymentsystem.dtos.UserResponse;
 import com.Zer0Rx.paymentsystem.entities.User;
 import com.Zer0Rx.paymentsystem.services.UserService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +23,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> registerUser(@RequestBody UserRequest userRequest){
+    public ResponseEntity<UserResponse> registerUser(@RequestBody @Valid UserRequest userRequest){
         User user = userRequest.toModel();
-        User userSaved = this.userService.registerUser(user);
+        UserResponse userSaved = this.userService.registerUser(user);
         return ResponseEntity.ok().body(userSaved);
     }
 }
