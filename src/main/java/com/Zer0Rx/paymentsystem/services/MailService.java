@@ -16,10 +16,10 @@ import jakarta.mail.internet.MimeMessage;
 public class MailService {
     @Autowired()
     private JavaMailSender mailSender; 
-    private String verifyURL = "http://localhost:8080/user/verify/code=";
+    private String verifyURL = "http://localhost:8080/user/verify?code=";
 
     @SuppressWarnings("null")
-    private void sendVerificationEmail(User user) throws UnsupportedEncodingException, MessagingException{
+    public void sendVerificationEmail(User user) throws UnsupportedEncodingException, MessagingException{
         String toAddress = user.getEmail();
         String fromAddress = "mountainstodo@gmail.com";
         String senderName = "Nice Payment System";
