@@ -23,14 +23,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChan(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(csrf -> csrf.disable())
-        .sessionManagement(session -> session
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers(HttpMethod.POST, "/user/register")
-        .permitAll().requestMatchers(HttpMethod.GET, "/user/verify")
-        .permitAll().anyRequest().authenticated())
-        .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-        .build();
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests( authorize -> authorize
+                        .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/verify").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
+                        .anyRequest().authenticated()
+                ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
         return authenticationConfiguration.getAuthenticationManager();
