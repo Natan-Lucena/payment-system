@@ -28,7 +28,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser(@RequestBody @Valid UserRequest userRequest) throws UnsupportedEncodingException, MessagingException{
         User user = userRequest.toModel();
         UserResponse userSaved = this.userService.registerUser(user);
