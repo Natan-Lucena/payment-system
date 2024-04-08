@@ -7,13 +7,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.Zer0Rx.paymentsystem.dtos.AuthenticationDTO;
 import com.Zer0Rx.paymentsystem.dtos.AuthenticationResponseDTO;
 import com.Zer0Rx.paymentsystem.entities.User;
 import com.Zer0Rx.paymentsystem.services.TokenService;
+@RestController
 @RequestMapping("/user")
-
 public class LoginController {
     @Autowired
     private TokenService tokenService;
