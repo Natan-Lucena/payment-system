@@ -18,7 +18,6 @@ public class MailService {
     private JavaMailSender mailSender; 
     private String verifyURL = "http://localhost:8080/user/verify?code=";
 
-    @SuppressWarnings("null")
     public void sendVerificationEmail(User user) throws UnsupportedEncodingException, MessagingException{
         String toAddress = user.getEmail();
         String fromAddress = "mountainstodo@gmail.com";
