@@ -19,9 +19,12 @@ public record UserRequest(
     @NotNull(message = "The password cant be null") 
     @NotBlank(message = "The password cant be blank") 
     @Size(min = 8, message = "The password must have at least 8 characthers")
-    String password
+    String password,
+    @NotNull(message = "The role cant be null") 
+    @NotBlank(message = "The role cant be blank") 
+    String role
     ) {
     public User toModel(){
-        return new User(name, email, password);
+        return new User(name, email, password, role);
     }
 }

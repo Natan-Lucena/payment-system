@@ -30,11 +30,13 @@ public class User implements UserDetails {
     private String password;
     private String verificationCode;
     private boolean enable;
+    public String role;
 
-    public User(String name, String email, String password){
+    public User(String name, String email, String password, String role){
         this.email = email;
         this.password = password;
         this.name = name;
+        this.role = role;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
