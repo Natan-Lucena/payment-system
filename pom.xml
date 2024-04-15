@@ -66,6 +66,18 @@
 			<artifactId>java-jwt</artifactId>
 			<version>4.0.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20231013</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.efipay.efisdk</groupId>
+			<artifactId>sdk-java-apis-efi</artifactId>
+			<version>1.0.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>
