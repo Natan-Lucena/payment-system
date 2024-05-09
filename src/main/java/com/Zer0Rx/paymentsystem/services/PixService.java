@@ -1,6 +1,7 @@
 package com.Zer0Rx.paymentsystem.services;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,8 +16,7 @@ import br.com.efi.efisdk.exceptions.EfiPayException;
 @Service
 public class PixService {
     public JSONObject pixCreateEVP(){
-        Credentials credentials = new Credentials();
-        JSONObject options = this.buildJsonObject(credentials);
+        JSONObject options = this.buildJsonObject();
 
 
         try {
@@ -34,8 +34,7 @@ public class PixService {
     }
 
 public JSONObject pixCreateCharge(PixChargeRequest pixChargeRequest) throws Exception{
-    Credentials credentials =  new Credentials();
-    JSONObject options = this.buildJsonObject(credentials);
+    JSONObject options = this.buildJsonObject();
 
     JSONObject body =  new JSONObject();
 
@@ -52,19 +51,24 @@ public JSONObject pixCreateCharge(PixChargeRequest pixChargeRequest) throws Exce
     try{ 
         EfiPay efi = new EfiPay(options);
         JSONObject response = efi.call("pixCreateImmediateCharge", new HashMap<String,String>(), body);
-        return response;
+        int chargeId =  response.getJSONObject("loc").getInt("id");
+        Map<String, String> params  = new HashMap<String, String>();
+        params.put("id", String.valueOf(chargeId));
+        JSONObject pixQrCode = efi.call("pixGenerateQRCode", params, new JSONObject());
+        return pixQrCode;
     }catch(EfiPayException e){
         System.out.println(e.getErrorDescription());
     }
     return null;
 }
-private JSONObject buildJsonObject(Credentials credentials){
-    JSONObject options = new JSONObject();
+    private JSONObject buildJsonObject(){
+        Credentials credentials = new Credentials();
+        JSONObject options = new JSONObject();
 
-    options.put("client_id", credentials.getClientId());
-    options.put("certificate", credentials.getCertificate());
-    options.put("client_secret", credentials.getClientSecret());
-    options.put("sandbox", credentials.isSandbox());
-    return options;
-}
+        options.put("client_id", credentials.getClientId());
+        options.put("certificate", credentials.getCertificate());
+        options.put("client_secret", credentials.getClientSecret());
+        options.put("sandbox", credentials.isSandbox());
+        return options;
+    }
 }
