@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import com.Zer0Rx.paymentsystem.dtos.PixChargeRequest;
 import com.Zer0Rx.paymentsystem.pix.Credentials;
 
 import br.com.efi.efisdk.EfiPay;
@@ -32,7 +33,7 @@ public class PixService {
         return null;
     }
 
-public void pixCreateCharge(String chave, String valor) throws Exception{
+public JSONObject pixCreateCharge(PixChargeRequest pixChargeRequest) throws Exception{
     Credentials credentials =  new Credentials();
     JSONObject options = this.buildJsonObject(credentials);
 
@@ -40,8 +41,8 @@ public void pixCreateCharge(String chave, String valor) throws Exception{
 
     body.put("calendario", new JSONObject().put("expiracao", 3600));
     body.put("devedor", new JSONObject().put("cpf", "12345678909").put("nome", "Francisco da Silva"));
-    body.put("valor", new JSONObject().put("original", valor));
-    body.put("chave", chave);
+    body.put("valor", new JSONObject().put("original", pixChargeRequest.valor()));
+    body.put("chave", pixChargeRequest.chave());
 
     JSONArray infoAdicionais = new JSONArray();
     infoAdicionais.put(new JSONObject().put("nome", "Campo 1").put("valor", "Informação Adicional1 do PSP-Recebedor"));
@@ -50,11 +51,12 @@ public void pixCreateCharge(String chave, String valor) throws Exception{
 
     try{ 
         EfiPay efi = new EfiPay(options);
-        JSONObject response =  efi.call("pixCreateImediateCharge", new HashMap<String, String>(), body);
-        System.out.println(response);
+        JSONObject response = efi.call("pixCreateImmediateCharge", new HashMap<String,String>(), body);
+        return response;
     }catch(EfiPayException e){
         System.out.println(e.getErrorDescription());
     }
+    return null;
 }
 private JSONObject buildJsonObject(Credentials credentials){
     JSONObject options = new JSONObject();
