@@ -5,8 +5,11 @@
 #Security: Spring security + Bearer token
 
 #ROUTES:
+  
+```markdown
   POST -> /user/register
   GET -> /user/verify
   POST -> /user/login
   GET -> /pix/create
   POST -> /pix/charge
+```
