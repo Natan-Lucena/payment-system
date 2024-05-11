@@ -7,6 +7,7 @@ import java.time.ZoneOffset;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.Zer0Rx.paymentsystem.config.exceptions.InvalidTokenException;
 import com.Zer0Rx.paymentsystem.entities.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -33,7 +34,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm).withIssuer("auth").build().verify(token).getSubject();
         }catch(JWTVerificationException exception){
-            throw new RuntimeException("Token invalido");
+            throw new InvalidTokenException("Invalid Token");
         }
     }
 
