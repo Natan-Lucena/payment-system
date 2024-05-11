@@ -25,7 +25,7 @@ public class PixController {
     private PixService pixService;
 
     @GetMapping("/create-payment")
-    public ResponseEntity<String> createPix(){
+    public ResponseEntity<String> createPix() throws Exception{
        JSONObject response =  this.pixService.pixCreateEVP();
        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response.toString());
     }
