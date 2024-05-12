@@ -1,5 +1,5 @@
 package com.Zer0Rx.paymentsystem.dtos;
 
-public record PixChargeRequest(String chave, String valor) {
+public record PixChargeRequest(String valor) {
     
 }
