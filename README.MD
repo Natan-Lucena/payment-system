@@ -10,6 +10,6 @@
 POST -> /user/register
 GET -> /user/verify
 POST -> /user/login
-GET -> /pix/create-payment
+GET -> /pix/create-payment-key
 POST -> /pix/pay
 ```

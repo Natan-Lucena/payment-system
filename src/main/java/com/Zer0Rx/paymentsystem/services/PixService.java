@@ -5,50 +5,64 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.Zer0Rx.paymentsystem.dtos.PixChargeRequest;
+import com.Zer0Rx.paymentsystem.config.exceptions.ErrorCreatingKey;
+import com.Zer0Rx.paymentsystem.config.exceptions.ErrorCreatingPayment;
+import com.Zer0Rx.paymentsystem.config.exceptions.UserAlreadyHavePaymentKeyException;
+import com.Zer0Rx.paymentsystem.config.exceptions.UserDoesNotHavePaymentKey;
+import com.Zer0Rx.paymentsystem.entities.User;
 import com.Zer0Rx.paymentsystem.pix.Credentials;
+import com.Zer0Rx.paymentsystem.repositories.UserRepository;
 
 import br.com.efi.efisdk.EfiPay;
 import br.com.efi.efisdk.exceptions.EfiPayException;
 
 @Service
 public class PixService {
-    public JSONObject pixCreateEVP(){
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public JSONObject pixCreateEVP(String email) throws Exception{
         JSONObject options = this.buildJsonObject();
-
-
+        User user = this.userRepository.findByEmail(email);
+        if(user.getPaymentKey() != null){
+            throw new UserAlreadyHavePaymentKeyException();
+        }
         try {
             EfiPay efi = new EfiPay(options);
             JSONObject response = efi.call("pixCreateEvp", new HashMap<String,String>(), new JSONObject());
+            user.setPaymentKey(response.getString("chave"));
+            this.userRepository.save(user);
             return response;
         }catch (EfiPayException e){
-            System.out.println(e.getError());
-            System.out.println(e.getErrorDescription());
+            throw new ErrorCreatingKey();
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
+        
     }
 
-public JSONObject pixCreateCharge(PixChargeRequest pixChargeRequest) throws Exception{
+public JSONObject pixCreateCharge(String valor, String email) throws Exception{
+
+    User user = this.userRepository.findByEmail(email);
+    if(user.getPaymentKey() == null){
+        throw new UserDoesNotHavePaymentKey();
+    }
     JSONObject options = this.buildJsonObject();
 
     JSONObject body =  new JSONObject();
 
     body.put("calendario", new JSONObject().put("expiracao", 3600));
     body.put("devedor", new JSONObject().put("cpf", "12345678909").put("nome", "Francisco da Silva"));
-    body.put("valor", new JSONObject().put("original", pixChargeRequest.valor()));
-    body.put("chave", pixChargeRequest.chave());
+    body.put("valor", new JSONObject().put("original", valor));
+    body.put("chave", user.getPaymentKey());
 
     JSONArray infoAdicionais = new JSONArray();
     infoAdicionais.put(new JSONObject().put("nome", "Campo 1").put("valor", "Informação Adicional1 do PSP-Recebedor"));
     infoAdicionais.put(new JSONObject().put("nome", "Campo 2").put("valor", "Informação Adicional2 do PSP-Recebedor"));
     body.put("infoAdicionais", infoAdicionais);
-
-    try{ 
+    try{
         EfiPay efi = new EfiPay(options);
         JSONObject response = efi.call("pixCreateImmediateCharge", new HashMap<String,String>(), body);
         int chargeId =  response.getJSONObject("loc").getInt("id");
@@ -57,9 +71,9 @@ public JSONObject pixCreateCharge(PixChargeRequest pixChargeRequest) throws Exce
         JSONObject pixQrCode = efi.call("pixGenerateQRCode", params, new JSONObject());
         return pixQrCode;
     }catch(EfiPayException e){
-        System.out.println(e.getErrorDescription());
+        throw new ErrorCreatingPayment();
     }
-    return null;
+    
 }
     private JSONObject buildJsonObject(){
         Credentials credentials = new Credentials();
