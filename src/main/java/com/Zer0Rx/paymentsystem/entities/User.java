@@ -28,6 +28,7 @@ public class User implements UserDetails {
     private String name;
     private String email;
     private String password;
+    private String paymentKey;
     private String verificationCode;
     private boolean enable;
     public String role;
